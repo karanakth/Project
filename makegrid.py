@@ -33,13 +33,13 @@ def makegrid(x,y,z,atom_l,ngridpoints):
     # print cube file to filename
     
         
-if __name__ == ' __main__':
-    x = np.array([6,1,-3,-3.2,6.1])
-    y = np.array([6,1,-3,-3.2,6.1])
-    z = np.array([6,1,-3,-3.2,6.1])
-    atom_l = ['Rn', 'O', 'O','Rn','C']
-    print makegrid(x,y,z,atom_l)
-else:
+#if __name__ == ' __main__':
+#    x = np.array([6,1,-3,-3.2,6.1])
+ #   y = np.array([6,1,-3,-3.2,6.1])
+ #   z = np.array([6,1,-3,-3.2,6.1])
+ #   atom_l = ['Rn', 'O', 'O','Rn','C']
+ #   print makegrid(x,y,z,atom_l)
+#else:
     
     
     	 
