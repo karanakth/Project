@@ -1,5 +1,7 @@
 import numpy as np
 import atomic_data
+import sys
+
 
 def makegrid(x,y,z,atom_l,ngridpoints):
     atoms = []
@@ -25,14 +27,32 @@ def makegrid(x,y,z,atom_l,ngridpoints):
 
     return XX,YY,ZZ
 
-
-def cubegen(x,y,z):
+def wavefunc_one_s(x,y,z):
+    x = np.array(x)
+    y = np.array(y)
+    z = np.array(z)
+    ngrid_points = 80
+    stepsize = 0.1
     Z = 1
     a = 5.291772*10**-11  # m
     sqrtpi = 1.7724
     c = 1/sqrtpi*(Z/a)**(3/2)
-    r = np.sqrt(x**2+y**2+z**2) *10**-11# m
-    return c*np.exp(-Z/(a)*r)
+    r = np.sqrt(x**2+y**2+z**2)*10**(-11) # m
+    outfile = open('out','w')
+    outfile.write('CPMD CUBE FILE. \nOUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z')
+    outfile.write('\n %g  0.000000    0.000000    0.000000' % (len(x)))
+    outfile.write('\n %g  %g    0.000000    0.000000' % (ngrid_points,stepsize))   
+    outfile.write('\n %g  0.000000    %g    0.000000' % (ngrid_points,stepsize))
+    outfile.write('\n %g  0.000000    0.000000    %g' % (ngrid_points,stepsize))
+    for i in range(len(x)):
+	    outfile.write('\n nr  0.000000    %12.5e    %12.5e    %12.5e' % (float(x[i]),float(y[i]),float(z[i])))
+    return c*np.exp(-Z*r/(a))
+
+# write cube file
+
+        
+
+#def wavefunc_two_p(x,y,z):
     #return x**2
     # call makegrid
     # call subroutine in veloxchem to get density 
@@ -61,13 +81,14 @@ y = np.array([0])
 z = np.array([0])
 atom_l = ['H']
 
-xx,yy,zz = makegrid(x,y,z,atom_l,2)
+xx,yy,zz = makegrid(x,y,z,atom_l,80)
 #print(xx)
 #print(xx.shape)
 
-L = cubegen(xx,yy,zz)
+L = wavefunc_one_s(xx,yy,zz)
 
-print(L)
+#print(L)
+
 #l = (xx+yy+zz)
 #print(l)
 #print(yy)
