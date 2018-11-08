@@ -31,21 +31,30 @@ def wavefunc_one_s(x,y,z):
     x = np.array(x)
     y = np.array(y)
     z = np.array(z)
-    ngrid_points = 80
+    ngrid_points = 2
     stepsize = 0.1
     Z = 1
     a = 5.291772*10**-11  # m
     sqrtpi = 1.7724
     c = 1/sqrtpi*(Z/a)**(3/2)
     r = np.sqrt(x**2+y**2+z**2)*10**(-11) # m
+    z = c*np.exp(-Z*r/a)
     outfile = open('out','w')
     outfile.write('CPMD CUBE FILE. \nOUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z')
     outfile.write('\n %g  0.000000    0.000000    0.000000' % (len(x)))
     outfile.write('\n %g  %g    0.000000    0.000000' % (ngrid_points,stepsize))   
     outfile.write('\n %g  0.000000    %g    0.000000' % (ngrid_points,stepsize))
     outfile.write('\n %g  0.000000    0.000000    %g' % (ngrid_points,stepsize))
-    outfile.write('\n {} ' .format(np.array(r)))
-                
+    #outfile.write('\n {} ' .format(z)) 
+    print(len(x))
+    for i in range(len(x)):
+        for j in range(len(x)):
+            for l in range(len(x)):
+                outfile.write('\n   {}  {}  ' .format(z[i][l][j], z[i][l][i]))
+    
+    #outfile.write('\n   {} {} '.format(z[0][0][0], z[0][0][0]))
+    
+               
 
 # write cube file
 
@@ -80,7 +89,7 @@ y = np.array([0])
 z = np.array([0])
 atom_l = ['H']
 
-xx,yy,zz = makegrid(x,y,z,atom_l,80)
+xx,yy,zz = makegrid(x,y,z,atom_l,2)
 #print(xx)
 #print(xx.shape)
 
