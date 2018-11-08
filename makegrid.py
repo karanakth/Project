@@ -1,7 +1,6 @@
 import numpy as np
 import atomic_data
 
-
 def makegrid(x,y,z,atom_l,ngridpoints):
     atoms = []
     for i in range(len(atom_l)):
@@ -26,8 +25,15 @@ def makegrid(x,y,z,atom_l,ngridpoints):
 
     return XX,YY,ZZ
 
-#def cubegen(grid,density,filename):
 
+def cubegen(x,y,z):
+    Z = 1
+    a = 5.291772*10**-11  # m
+    sqrtpi = 1.7724
+    c = 1/sqrtpi*(Z/a)**(3/2)
+    r = np.sqrt(x**2+y**2+z**2) *10**-11# m
+    return c*np.exp(-Z/(a)*r)
+    #return x**2
     # call makegrid
     # call subroutine in veloxchem to get density 
     # print cube file to filename
@@ -50,15 +56,18 @@ def makegrid(x,y,z,atom_l,ngridpoints):
 #atom_l = ['Rn', 'O', 'O','Rn','C']
 
 #Test case 1 - Only hydrogen atom
-#x = np.array([0])
-#y = np.array([0])
-#z = np.array([0])
-#atom_l = ['H']
+x = np.array([0])
+y = np.array([0])
+z = np.array([0])
+atom_l = ['H']
 
-#xx,yy,zz = makegrid(x,y,z,atom_l,2)
+xx,yy,zz = makegrid(x,y,z,atom_l,2)
 #print(xx)
 #print(xx.shape)
 
+L = cubegen(xx,yy,zz)
+
+print(L)
 #l = (xx+yy+zz)
 #print(l)
 #print(yy)
