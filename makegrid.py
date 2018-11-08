@@ -44,9 +44,8 @@ def wavefunc_one_s(x,y,z):
     outfile.write('\n %g  %g    0.000000    0.000000' % (ngrid_points,stepsize))   
     outfile.write('\n %g  0.000000    %g    0.000000' % (ngrid_points,stepsize))
     outfile.write('\n %g  0.000000    0.000000    %g' % (ngrid_points,stepsize))
-    for i in range(len(x)):
-	    outfile.write('\n nr  0.000000    %12.5e    %12.5e    %12.5e' % (float(x[i]),float(y[i]),float(z[i])))
-    return c*np.exp(-Z*r/(a))
+    outfile.write('\n {} ' .format(np.array(r)))
+                
 
 # write cube file
 
