@@ -29,38 +29,34 @@ def makegrid(x,y,z,atom_l,ngridpoints):
 
     XX,YY,ZZ = np.meshgrid(X,Y,Z)
 
-    return XX,YY,ZZ,x_min,y_min,z_min,xstep,ystep,zstep
-     
-def wavefunc_one_s(x,y,z,ngrid_points,x_min,y_min,z_min,xstep,ystep,zstep):
-    x = np.array(x)
-    y = np.array(y)
-    z = np.array(z)
-    IFLAG = 1
+    numatoms = len(atom_l)
+    
+    # Evaluate the function
     Z = 1
     a = 5.291772*10**-11  # m
     sqrtpi = 1.7724
     c = 1/sqrtpi*(Z/a)**(3/2)
-    r = np.sqrt(x**2+y**2+z**2)*10**(-11) # m
+    r = np.sqrt(XX**2+YY**2+ZZ**2)*10**(-11) # m
     f = c*np.exp(-Z*r/a)
-    #f = (x**2+y**2+z**2)*10**-6
-    outfile = open('out.cube','w')
+    #f = (XX**2+YY**2+ZZ**2)*10**-6
+    
+    
+    # out put code
+    outfile = open('out_two.cube','w')
     outfile.write(' Title Card Required Density=SCF\n')
     outfile.write(' Electron density from Total SCF Density\n')
     #outfile.write('CPMD CUBE FILE. \nOUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z\n')
-    outfile.write('    %g   %2.6g      %2.6g      %2.6g         1\n' % (IFLAG,x_min,y_min,z_min))
-    outfile.write('   %g    %2.6g  0.000000   0.000000\n' % (ngrid_points,xstep))
-    outfile.write('   %g    0.000000   %2.6g  0.000000\n' % (ngrid_points,ystep))
-    outfile.write('   %g    0.000000   0.000000   %2.6g\n' % (ngrid_points,zstep))
-    outfile.write('    1    1.000000   0.000000   0.000000    0.000000\n')
-                  
-    #outfile.write('\n %g  0.000000    0.000000    0.000000' % (len(x)))
-    #outfile.write('\n %g  %g    0.000000    0.000000' % (ngrid_points,stepsize))   
-    #outfile.write('\n %g  0.000000    %g    0.000000' % (ngrid_points,stepsize))
-    #outfile.write('\n %g  0.000000    0.000000    %g' % (ngrid_points,stepsize))
+    outfile.write('%5d%12.6f%12.6f%12.6f%5d\n' % (numatoms,x_min,y_min,z_min,1))
+    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,xstep,0,0))
+    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,0,ystep,0))
+    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,0,0,zstep))
+    for oo in range(len(atom_l)):
+         outfile.write('%5d%12.6f%12.6f%12.6f%12.6f\n' % (atomic_data.charge(atom_l[oo]),atomic_data.charge(atom_l[oo]),x[oo],y[oo],z[oo]))
+   
     
-    for i in range(len(x)):
-        for j in range(len(y)):
-            for l in range(len(z)):
+    for i in range(len(XX)):
+        for j in range(len(YY)):
+            for l in range(len(ZZ)):
                 outfile.write(' %12.5E' % (f[i][l][j]))
                 if  l %6 == 5:
                     outfile.write("\n")
@@ -98,16 +94,19 @@ def wavefunc_one_s(x,y,z,ngrid_points,x_min,y_min,z_min,xstep,ystep,zstep):
 
 
 #Test case 2 - Two hydrogen atoms
-x = np.array([0,1])
-y = np.array([0,1])
-z = np.array([0,1])
+x = np.array([0,0])
+y = np.array([0 ,0])
+z = np.array([0.36741100,-0.36741100])
 atom_l = ['H','H']
 
-xx,yy,zz,x_min,y_min,z_min,xstep,ystep,zstep = makegrid(x,y,z,atom_l,80)
+
+makegrid(x,y,z,atom_l,80)
+
+#xx,yy,zz,x_min,y_min,z_min,xstep,ystep,zstep = makegrid(x,y,z,atom_l,80)
 #print(xx)
 #print(xx.shape)
 
-L = wavefunc_one_s(xx,yy,zz,80,x_min,y_min,z_min,xstep,ystep,zstep)
+#L = wavefunc_one_s(xx,yy,zz,80,x_min,y_min,z_min,xstep,ystep,zstep)
 
 #print(L)
 
