@@ -38,7 +38,7 @@ def wavefunc_one_s(x,y,z):
     sqrtpi = 1.7724
     c = 1/sqrtpi*(Z/a)**(3/2)
     r = np.sqrt(x**2+y**2+z**2)*10**(-11) # m
-    z = c*np.exp(-Z*r/a)
+    f = c*np.exp(-Z*r/a)
     outfile = open('out','w')
     outfile.write('CPMD CUBE FILE. \nOUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z')
     outfile.write('\n %g  0.000000    0.000000    0.000000' % (len(x)))
@@ -48,11 +48,12 @@ def wavefunc_one_s(x,y,z):
     #outfile.write('\n {} ' .format(z)) 
     print(len(x))
     for i in range(len(x)):
-        for j in range(len(x)):
-            for l in range(len(x)):
-                outfile.write('\n   {}  {}  ' .format(z[i][l][j], z[i][l][i]))
-    
-    #outfile.write('\n   {} {} '.format(z[0][0][0], z[0][0][0]))
+        for j in range(len(y)):
+            for l in range(len(z)):
+                outfile.write('%g  ' % (f[i][l][j]))
+                if  l %6 == 5:
+                    outfile.write('\n')
+            outfile.write("\n")    
     
                
 
@@ -89,7 +90,7 @@ y = np.array([0])
 z = np.array([0])
 atom_l = ['H']
 
-xx,yy,zz = makegrid(x,y,z,atom_l,2)
+xx,yy,zz = makegrid(x,y,z,atom_l,80)
 #print(xx)
 #print(xx.shape)
 
