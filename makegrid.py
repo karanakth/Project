@@ -30,7 +30,7 @@ def makegrid(x,y,z,atom_l,ngridpoints):
     XX,YY,ZZ = np.meshgrid(X,Y,Z)
 
     return XX,YY,ZZ,x_min,y_min,z_min,xstep,ystep,zstep
-0.000000        
+     
 def wavefunc_one_s(x,y,z,ngrid_points,x_min,y_min,z_min,xstep,ystep,zstep):
     x = np.array(x)
     y = np.array(y)
@@ -41,8 +41,8 @@ def wavefunc_one_s(x,y,z,ngrid_points,x_min,y_min,z_min,xstep,ystep,zstep):
     sqrtpi = 1.7724
     c = 1/sqrtpi*(Z/a)**(3/2)
     r = np.sqrt(x**2+y**2+z**2)*10**(-11) # m
-    #f = c*np.exp(-Z*r/a)
-    f = (x**2+y**2+z**2)*10**-6
+    f = c*np.exp(-Z*r/a)
+    #f = (x**2+y**2+z**2)*10**-6
     outfile = open('out.cube','w')
     outfile.write(' Title Card Required Density=SCF\n')
     outfile.write(' Electron density from Total SCF Density\n')
@@ -91,10 +91,17 @@ def wavefunc_one_s(x,y,z,ngrid_points,x_min,y_min,z_min,xstep,ystep,zstep):
 #atom_l = ['Rn', 'O', 'O','Rn','C']
 
 #Test case 1 - Only hydrogen atom
-x = np.array([0])
-y = np.array([0])
-z = np.array([0])
-atom_l = ['H']
+#x = np.array([0])
+#y = np.array([0])
+#z = np.array([0])
+#atom_l = ['H']
+
+
+#Test case 2 - Two hydrogen atoms
+x = np.array([0,1])
+y = np.array([0,1])
+z = np.array([0,1])
+atom_l = ['H','H']
 
 xx,yy,zz,x_min,y_min,z_min,xstep,ystep,zstep = makegrid(x,y,z,atom_l,80)
 #print(xx)
