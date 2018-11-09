@@ -27,12 +27,11 @@ def makegrid(x,y,z,atom_l,ngridpoints):
 
     return XX,YY,ZZ
 
-def wavefunc_one_s(x,y,z):
+def wavefunc_one_s(x,y,z,ngrid_points):
     x = np.array(x)
     y = np.array(y)
     z = np.array(z)
-    ngrid_points = 2
-    stepsize = 0.1
+    stepsize = x[1]-x[0]
     Z = 1
     a = 5.291772*10**-11  # m
     sqrtpi = 1.7724
@@ -41,33 +40,29 @@ def wavefunc_one_s(x,y,z):
     f = c*np.exp(-Z*r/a)
     outfile = open('out','w')
     outfile.write('CPMD CUBE FILE. \nOUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z')
+    
     outfile.write('\n %g  0.000000    0.000000    0.000000' % (len(x)))
     outfile.write('\n %g  %g    0.000000    0.000000' % (ngrid_points,stepsize))   
-    outfile.write('\n %g  0.000000    %g    0.000000' % (ngrid_points,stepsize))
-    outfile.write('\n %g  0.000000    0.000000    %g' % (ngrid_points,stepsize))
-    #outfile.write('\n {} ' .format(z)) 
-    print(len(x))
+    #outfile.write('\n %g  0.000000    %g    0.000000' % (ngrid_points,stepsize))
+    #outfile.write('\n %g  0.000000    0.000000    %g' % (ngrid_points,stepsize))
     for i in range(len(x)):
         for j in range(len(y)):
             for l in range(len(z)):
-                outfile.write('%g  ' % (f[i][l][j]))
+                outfile.write('%12.5e  ' % (f[i][l][j]))
                 if  l %6 == 5:
-                    outfile.write('\n')
+                    outfile.write("\n")
             outfile.write("\n")    
     
                
-
 # write cube file
 
-        
-
+       
 #def wavefunc_two_p(x,y,z):
     #return x**2
     # call makegrid
     # call subroutine in veloxchem to get density 
     # print cube file to filename
-    
-        
+            
 #if __name__ == ' __main__':
  #   x = np.array([6,1,-3,-3.2,6.1])
  #   y = np.array([6,1,-3,-3.2,6.1])
@@ -77,8 +72,6 @@ def wavefunc_one_s(x,y,z):
 #else:
     
     
-    	 
-
 #x = np.array([6,1,-3,-3.2,6.1])
 #y = np.array([6,1,-3,-3.2,6.1])
 #z = np.array([6,1,-3,-3.2,6.1])
@@ -94,7 +87,7 @@ xx,yy,zz = makegrid(x,y,z,atom_l,80)
 #print(xx)
 #print(xx.shape)
 
-L = wavefunc_one_s(xx,yy,zz)
+L = wavefunc_one_s(xx,yy,zz,80)
 
 #print(L)
 
