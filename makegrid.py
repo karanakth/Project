@@ -22,33 +22,46 @@ def makegrid(x,y,z,atom_l,ngridpoints):
     X = np.linspace(x_min,x_max,ngridpoints)
     Y = np.linspace(y_min,y_max,ngridpoints)
     Z = np.linspace(z_min,z_max,ngridpoints)
+    
+    xstep = X[1]-X[0]
+    ystep = Y[1]-Y[0]
+    zstep = Z[1]-Z[0]
 
     XX,YY,ZZ = np.meshgrid(X,Y,Z)
 
-    return XX,YY,ZZ
-
-def wavefunc_one_s(x,y,z,ngrid_points):
+    return XX,YY,ZZ,x_min,y_min,z_min,xstep,ystep,zstep
+0.000000        
+def wavefunc_one_s(x,y,z,ngrid_points,x_min,y_min,z_min,xstep,ystep,zstep):
     x = np.array(x)
     y = np.array(y)
     z = np.array(z)
-    stepsize = x[1]-x[0]
+    IFLAG = 1
     Z = 1
     a = 5.291772*10**-11  # m
     sqrtpi = 1.7724
     c = 1/sqrtpi*(Z/a)**(3/2)
     r = np.sqrt(x**2+y**2+z**2)*10**(-11) # m
-    f = c*np.exp(-Z*r/a)
-    outfile = open('out','w')
-    outfile.write('CPMD CUBE FILE. \nOUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z')
-    
-    outfile.write('\n %g  0.000000    0.000000    0.000000' % (len(x)))
-    outfile.write('\n %g  %g    0.000000    0.000000' % (ngrid_points,stepsize))   
+    #f = c*np.exp(-Z*r/a)
+    f = (x**2+y**2+z**2)*10**-6
+    outfile = open('out.cube','w')
+    outfile.write(' Title Card Required Density=SCF\n')
+    outfile.write(' Electron density from Total SCF Density\n')
+    #outfile.write('CPMD CUBE FILE. \nOUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z\n')
+    outfile.write('    %g   %2.6g      %2.6g      %2.6g         1\n' % (IFLAG,x_min,y_min,z_min))
+    outfile.write('   %g    %2.6g  0.000000   0.000000\n' % (ngrid_points,xstep))
+    outfile.write('   %g    0.000000   %2.6g  0.000000\n' % (ngrid_points,ystep))
+    outfile.write('   %g    0.000000   0.000000   %2.6g\n' % (ngrid_points,zstep))
+    outfile.write('    1    1.000000   0.000000   0.000000    0.000000\n')
+                  
+    #outfile.write('\n %g  0.000000    0.000000    0.000000' % (len(x)))
+    #outfile.write('\n %g  %g    0.000000    0.000000' % (ngrid_points,stepsize))   
     #outfile.write('\n %g  0.000000    %g    0.000000' % (ngrid_points,stepsize))
     #outfile.write('\n %g  0.000000    0.000000    %g' % (ngrid_points,stepsize))
+    
     for i in range(len(x)):
         for j in range(len(y)):
             for l in range(len(z)):
-                outfile.write('%12.5e  ' % (f[i][l][j]))
+                outfile.write(' %12.5E' % (f[i][l][j]))
                 if  l %6 == 5:
                     outfile.write("\n")
             outfile.write("\n")    
@@ -83,11 +96,11 @@ y = np.array([0])
 z = np.array([0])
 atom_l = ['H']
 
-xx,yy,zz = makegrid(x,y,z,atom_l,80)
+xx,yy,zz,x_min,y_min,z_min,xstep,ystep,zstep = makegrid(x,y,z,atom_l,80)
 #print(xx)
 #print(xx.shape)
 
-L = wavefunc_one_s(xx,yy,zz,80)
+L = wavefunc_one_s(xx,yy,zz,80,x_min,y_min,z_min,xstep,ystep,zstep)
 
 #print(L)
 
