@@ -1,13 +1,16 @@
 import numpy as np
 import atomic_data
-import sys
-
+import S_orb
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
 def makegrid(x,y,z,atom_l,ngridpoints):
+    
+    #### Find dimensions of the box ####
     atoms = []
     for i in range(len(atom_l)):
         atoms.append(atomic_data.vdW(atom_l[i]))
-                  
+    
     atoms = np.array(atoms)
     x_max = np.max(x + atoms)
     x_min = np.max(x - atoms)
@@ -18,38 +21,79 @@ def makegrid(x,y,z,atom_l,ngridpoints):
     z_max = np.max(z + atoms)
     z_min = np.max(z - atoms)
 
-    # Make linspace
+    ##### Make linspace #####
+    
     X = np.linspace(x_min,x_max,ngridpoints)
     Y = np.linspace(y_min,y_max,ngridpoints)
     Z = np.linspace(z_min,z_max,ngridpoints)
     
-    xstep = X[1]-X[0]
-    ystep = Y[1]-Y[0]
-    zstep = Z[1]-Z[0]
+    ###### Make meshgrid  #####
 
     XX,YY,ZZ = np.meshgrid(X,Y,Z)
+   
+    #### Plot a grid for demonstration ###
+    
+    XV = np.linspace(x_min,x_max,12)
+    YV = np.linspace(y_min,y_max,12)
+    ZV = np.linspace(z_min,z_max,12)
+    
+    XXV,YYV,ZZV = np.meshgrid(XV,YV,ZV)        
+    fig = plt.figure()
 
-    numatoms = len(atom_l)
+    ax = fig.add_subplot(111, projection = '3d')
+    ax.scatter(XXV,YYV,ZZV, c='r', marker = 'o')
+
+    plt.show()
+
+    ###### Evaluate the function ######
     
-    # Evaluate the function
-    Z = 1
-    a = 5.291772*10**-11  # m
-    sqrtpi = 1.7724
-    c = 1/sqrtpi*(Z/a)**(3/2)
-    r = np.sqrt(XX**2+YY**2+ZZ**2)*10**(-11) # m
-    f = c*np.exp(-Z*r/a)
-    #f = (XX**2+YY**2+ZZ**2)*10**-6
+    ##### Valance shell for hydrogens 6-31G 3 tight ####
+    
+    exponents = np.array([18.7311370,2.8253937,0.6401217])
+    coeff = np.array([0.03349460 ,0.23472695, 0.81375733])
+    
+    f = np.zeros((ngridpoints,ngridpoints,ngridpoints))
+    ff = np.zeros((ngridpoints,ngridpoints,ngridpoints))
+    
+    for i in range(len(exponents)):
+        for l in range(len(atom_l)):
+            m = coeff[i]*S_orb.S_orb(x[l],y[l],z[l],exponents[i],XX,YY,ZZ)
+            print("index,atom")
+            print(i,l)
+            f += m 
+            
+    #### 1 loose  ####
+    exponent =   0.1612778            
+    coeffs =   1.0000000  
+    for l in range(len(atom_l)):
+        mm = coeffs*S_orb.S_orb(x[l],y[l],z[l],exponent,XX,YY,ZZ)
+        ff += mm
+        
+        
+    ####  Framework for p type Gaussians ###
+    
+    Exponents_c = np.array([3047.5249000, 457.3695100, 103.9486900,  29.2101550, 9.2866630, 3.1639270 ])
+    coeffs_C = np.array([0.0018347,0.0140373, 0.0688426,0.2321844, 0.4679413,0.3623120 ])
+                     
     
     
-    # out put code
+    #### Add inner and out shell ####
+    
+    f = f + ff
+    
+    ## square to get density ####
+    
+    f = f**2
+    
+          #### outfile code ####
     outfile = open('out_two.cube','w')
     outfile.write(' Title Card Required Density=SCF\n')
     outfile.write(' Electron density from Total SCF Density\n')
     #outfile.write('CPMD CUBE FILE. \nOUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z\n')
-    outfile.write('%5d%12.6f%12.6f%12.6f%5d\n' % (numatoms,x_min,y_min,z_min,1))
-    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,xstep,0,0))
-    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,0,ystep,0))
-    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,0,0,zstep))
+    outfile.write('%5d%12.6f%12.6f%12.6f%5d\n' % (len(atom_l),x_min,y_min,z_min,1))
+    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,X[1]-X[0],0,0))
+    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,0,Y[1]-Y[0],0))
+    outfile.write('%5d%12.6f%12.6f%12.6f\n' % (ngridpoints,0,0,Z[1]-Z[0]))
     for oo in range(len(atom_l)):
          outfile.write('%5d%12.6f%12.6f%12.6f%12.6f\n' % (atomic_data.charge(atom_l[oo]),atomic_data.charge(atom_l[oo]),x[oo],y[oo],z[oo]))
    
@@ -96,7 +140,7 @@ def makegrid(x,y,z,atom_l,ngridpoints):
 #Test case 2 - Two hydrogen atoms
 x = np.array([0,0])
 y = np.array([0 ,0])
-z = np.array([0.36741100,-0.36741100])
+z = np.array([0.694307,-0.694307])
 atom_l = ['H','H']
 
 
@@ -114,3 +158,6 @@ makegrid(x,y,z,atom_l,80)
 #print(l)
 #print(yy)
 #print(zz)
+
+
+
