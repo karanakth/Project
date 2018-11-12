@@ -1,11 +1,13 @@
 # Build s_orbitals
 import numpy as np
+
+# use math.pi
 def S_orb(x,y,z,a,xx,yy,zz):
 	X = x-xx
 	Y = y-yy
 	Z = z-zz
-	r = X**2+Y**2+Z**2
-	return (2*a/3.14)**(0.75)*np.exp(-a*r)
+	r2 = X**2+Y**2+Z**2
+	return (8*a**3/(3.14)**3)**(0.25)*np.exp(-a*r2)
 
 #x = np.array([0 ,1])
 #y = np.array([0 ,1])

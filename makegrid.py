@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 
 def makegrid(x,y,z,atom_l,ngridpoints):
-    
+    ## change to atom_radii, atomicdata
     #### Find dimensions of the box ####
     atoms = []
     for i in range(len(atom_l)):
@@ -85,7 +85,7 @@ def makegrid(x,y,z,atom_l,ngridpoints):
     
     f = f**2
     
-          #### outfile code ####
+          #### outfile code #### put it into a function
     outfile = open('out_two.cube','w')
     outfile.write(' Title Card Required Density=SCF\n')
     outfile.write(' Electron density from Total SCF Density\n')
